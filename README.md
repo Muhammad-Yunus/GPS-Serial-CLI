@@ -5,7 +5,7 @@
 ![tests](https://img.shields.io/badge/tests-92%20unit%20%7C%2021%20e2e-brightgreen)
 ![license](https://img.shields.io/badge/license-MIT-lightgrey)
 
-CLI tool untuk membaca dan decode data GPS dari modul UBLOX (NMEA protocol) via UART serial pada Raspberry Pi. Output dalam format **tabular** atau **JSON**.
+CLI tool to read and decode GPS data from a UBLOX module (NMEA protocol) via UART serial on Raspberry Pi. Output in **tabular** or **JSON** format.
 
 ## Architecture
 
@@ -20,16 +20,16 @@ CLI tool untuk membaca dan decode data GPS dari modul UBLOX (NMEA protocol) via 
 └─────────┴──────────┴───────────┴────────────┴───────────────┘
 ```
 
-**Lapisan:**
+**Layers:**
 
-| Layer | File | Tanggung jawab |
+| Layer | File | Responsibility |
 |-------|------|----------------|
-| **CLI** | `cli.c/h` | Parse argumen (`-d`, `-b`, `-j`, `-w`, `-c`) |
-| **Serial** | `serial.c/h` | Buka/konfigurasi UART via termios, baca line |
-| **NMEA** | `nmea.c/h` | Parse 5 sentence type: GGA, RMC, GSV, GSA, VTG — validasi checksum |
-| **GPS** | `gps.c/h` | Aggregate state dari multiple NMEA sentences |
-| **Output** | `output.c/h` | Format output tabular atau JSON |
-| **Main** | `main.c` | Loop utama: read → checksum → update → output |
+| **CLI** | `cli.c/h` | Parse arguments (`-d`, `-b`, `-j`, `-w`, `-c`) |
+| **Serial** | `serial.c/h` | Open/configure UART via termios, read lines |
+| **NMEA** | `nmea.c/h` | Parse 5 sentence types: GGA, RMC, GSV, GSA, VTG — checksum validation |
+| **GPS** | `gps.c/h` | Aggregate state from multiple NMEA sentences |
+| **Output** | `output.c/h` | Format output as tabular or JSON |
+| **Main** | `main.c` | Main loop: read → checksum → update → output |
 
 ## Project Structure
 
@@ -178,13 +178,13 @@ GPS Status
 
 ### 1. Enable UART on GPIO 14/15 (RPi5)
 
-Edit `/boot/firmware/config.txt` dan tambahkan:
+Edit `/boot/firmware/config.txt` and add:
 
 ```ini
 dtoverlay=uart0-pi5
 ```
 
-Kemudian reboot:
+Then reboot:
 
 ```bash
 sudo reboot
@@ -202,7 +202,7 @@ python3 check_gps.py
 ./build/gps
 ```
 
-> **Note:** Saat modul GPS belum lock satellite (lampu biru tidak blinking), tool akan menampilkan "NO FIX" dan data posisi tidak tersedia.
+> **Note:** When the GPS module has not locked onto satellites (blue LED not blinking), the tool will display "NO FIX" and position data will not be available.
 
 ## Tests
 
@@ -213,7 +213,7 @@ cmake --build build
 ctest --test-dir build -V
 ```
 
-Atau jalankan langsung:
+Or run directly:
 
 ```bash
 ./build/tests/test_nmea
@@ -222,7 +222,7 @@ Atau jalankan langsung:
 
 ### E2E Tests
 
-Mensimulasikan GPS device via virtual PTY:
+Simulates a GPS device via a virtual PTY:
 
 ```bash
 python3 e2e/e2e_test.py
