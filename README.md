@@ -122,57 +122,98 @@ cmake --build build
 
 ## Output Examples
 
-### Tabular
+### Tabular (Valid Fix)
 
 ```
 GPS Status
   Fix:                 VALID
-  Latitude:            -6.175392
-  Longitude:           106.827153
-  Altitude:            45.6 m
-  Satellites Used:     10
-  Satellites in View:  14
+  Latitude:            -6.150531
+  Longitude:           106.896957
+  Altitude:            52.6 m
+  Satellites Used:     9
+  Satellites in View:  13
   Fix Quality:         GPS
   Fix Mode:            3D
   HDOP:                0.9
-  VDOP:                1.2
-  PDOP:                1.5
-  Speed:               12.3 knots
-  Speed:               22.8 km/h
-  Course:              180.5°
-  UTC Time:            2024-01-15 07:30:45
+  VDOP:                1.7
+  PDOP:                1.9
+  Speed:               0.1 knots
+  Speed:               0.2 km/h
+  Course:              0.0°
+  UTC Time:            2026-07-31 08:54:26
 
   Satellites:
   PRN  Elevation  Azim  SNR   Used
-  2    45         180   42    yes
-  5    30         90    38    yes
-  ...
+  23   62          90   36    yes
+  25   35          49   32    yes
+  26   44         209    6    yes
+  28   41         323   20    yes
 ```
 
-### JSON
+### Tabular (No Fix Yet — Satellite Locking)
+
+```
+GPS Status
+  Fix:                 NO FIX
+  Latitude:            ---
+  Longitude:           ---
+  Altitude:            0.0 m
+  Satellites Used:     0
+  Satellites in View:  13
+  Fix Quality:         Invalid
+  Fix Mode:            Unknown
+  HDOP:                0.0
+  VDOP:                0.0
+  PDOP:                0.0
+  Speed:               0.0 knots
+  Speed:               0.0 km/h
+  Course:              0.0°
+
+  Satellites:
+  PRN  Elevation  Azim  SNR   Used
+  10   55         12    17    yes
+  12   1          42     8    yes
+  16   16         210    0    no
+  18   30         163   17    yes
+```
+
+### JSON (Single Read)
 
 ```json
 {
   "has_fix": true,
   "fix_quality": 1,
   "fix_mode": 3,
-  "latitude": -6.175392,
-  "longitude": 106.827153,
-  "altitude_m": 45.6,
-  "satellites_used": 10,
-  "satellites_view": 14,
+  "latitude": -6.150531,
+  "longitude": 106.896957,
+  "altitude_m": 52.6,
+  "satellites_used": 9,
+  "satellites_view": 13,
   "hdop": 0.9,
-  "vdop": 1.2,
-  "pdop": 1.5,
-  "speed_knots": 12.3,
-  "speed_kmh": 22.8,
-  "course_deg": 180.5,
-  "utc_time": "2024-01-15T07:30:45Z",
+  "vdop": 1.7,
+  "pdop": 1.9,
+  "speed_knots": 0.1,
+  "speed_kmh": 0.2,
+  "course_deg": 0.0,
+  "utc_time": "2026-07-31T08:54:26Z",
   "satellites": [
-    {"prn": 2, "elevation": 45, "azimuth": 180, "snr": 42}
+    {"prn": 28, "elevation": 41, "azimuth": 323, "snr": 20},
+    {"prn": 29, "elevation": 16, "azimuth": 120, "snr": 26},
+    {"prn": 31, "elevation": 40, "azimuth": 281, "snr": 30},
+    {"prn": 32, "elevation": 14, "azimuth": 353, "snr": 23}
   ]
 }
 ```
+
+### JSON Watch Mode (Multiple Objects, One Per Read)
+
+```
+{ "has_fix":true,"fix_quality":0,... }   /* first GPRMC, no fix yet */
+{ "has_fix":true,"fix_quality":1,... }   /* first GPGGA, valid fix */
+{ "has_fix":true,"fix_quality":1,... }   /* subsequent updates */
+```
+
+*(Each line is a separate JSON object; use `jq` or streaming parser to handle)*
 
 ## Running on Raspberry Pi
 
