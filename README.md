@@ -65,15 +65,35 @@ GPS/
 | `$GPGSA` | Fix mode (2D/3D), PDOP, HDOP, VDOP |
 | `$GPVTG` | Course over ground, speed (knots & km/h) |
 
-## Build
+## Build & Install
 
+### Prerequisites (Raspberry Pi OS)
 ```bash
-# Prerequisites (Raspberry Pi OS)
 sudo apt install cmake gcc socat python3-serial
+```
 
-# Build
+### Build only (run from project root)
+```bash
 cmake -S . -B build
 cmake --build build
+```
+
+### System-wide install (requires sudo)
+```bash
+sudo cmake --install build
+```
+
+### Manual install (no sudo)
+```bash
+mkdir -p ~/bin
+cp build/gps ~/bin/
+echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+After install, `gps` can be run from any directory:
+```bash
+gps -j
 ```
 
 ## Usage
@@ -240,7 +260,9 @@ python3 check_gps.py
 ### 3. Run
 
 ```bash
-./build/gps
+gps   # after install, from any directory
+# or
+./build/gps   # from project directory
 ```
 
 > **Note:** When the GPS module has not locked onto satellites (blue LED not blinking), the tool will display "NO FIX" and position data will not be available.
@@ -250,13 +272,8 @@ python3 check_gps.py
 ### Unit Tests
 
 ```bash
-cmake --build build
 ctest --test-dir build -V
-```
-
-Or run directly:
-
-```bash
+# Or directly:
 ./build/tests/test_nmea
 ./build/tests/test_gps
 ```
