@@ -1,17 +1,29 @@
 #include "gps.h"
 #include <string.h>
 #include <stdio.h>
+#include <limits.h>
+
+static inline int is_valid_satellite(const nmea_sat_t* s) {
+    return s->prn >= 1 && s->prn <= 32 &&
+           s->elevation >= 0 && s->elevation <= 90 &&
+           s->azimuth >= 0 && s->azimuth <= 360 &&
+           s->snr >= 0 && s->snr <= 50;
+}
 
 void gps_init(gps_t* gps) {
     memset(gps, 0, sizeof(*gps));
 }
 
 void gps_update_gsv(gps_t* gps, const nmea_gsv_t* gsv) {
-    if (gsv->nsats > 0) {
-        gps->nsats_tracked = gsv->nsats;
+    if (gsv->total_sats > 0) {
         gps->nsat_view = gsv->total_sats;
-        for (int i = 0; i < gsv->nsats && i < 32; i++)
-            gps->sats[i] = gsv->sats[i];
+        int count = 0;
+        for (int i = 0; i < gsv->nsats && i < 32; i++) {
+            if (is_valid_satellite(&gsv->sats[i])) {
+                gps->sats[count++] = gsv->sats[i];
+            }
+        }
+        gps->nsats_tracked = count;
     }
 }
 
