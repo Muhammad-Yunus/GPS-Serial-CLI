@@ -13,4 +13,7 @@ add_executable(gps
     src/cli.c
 )
 
+# Install target: run `make install` or `cmake --install build`
+install(TARGETS gps DESTINATION bin)
+
 add_subdirectory(tests)
